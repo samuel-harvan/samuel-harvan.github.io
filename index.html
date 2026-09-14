@@ -58,8 +58,6 @@
 
 <!-- ── hero ─────────────────────────────────────────────────── -->
 <section class="hero">
-  <p class="kicker">Samuel Harvan</p>
-  <p class="hero-sub">Honours Mathematics · University of Waterloo</p>
 
   <h1 class="hero-type">
     <span class="cycler" id="cycler" aria-hidden="true">
@@ -88,25 +86,19 @@
 <section class="sec" id="about" data-reveal>
   <div class="sec-head">
     <p class="idx">01 <span>/</span> About</p>
-    <h2 class="sec-title">The&nbsp;shape of<br>the&nbsp;work.</h2>
+    <h2 class="sec-title">A little&nbsp;<br>about me&nbsp;.</h2>
   </div>
 
   <div class="about-grid">
     <div class="about-copy">
-      <p class="lead">I'm a mathematics student at the University of Waterloo who likes the whole stack — from the CAN frames moving between microcontrollers to the interface someone actually clicks.</p>
-      <p>That range is deliberate. At <strong>MCAP Financial</strong> I built a full-stack expense-reporting platform and an OCR pipeline that reads twenty thousand documents a year. At <strong>UW Formula Electric</strong> I write embedded C for the control units in a racecar. Before either, I taught fifteen-plus new programmers Java and Python while tuning a competition robot's drivetrain into something that could win.</p>
-      <p>Different problems, one habit: understand the system end to end, then make it measurably better.</p>
-
-      <ul class="facts">
-        <li><span>President's Scholarship of Distinction</span></li>
-        <li><span>FIRST Robotics World Championship qualifier</span></li>
-        <li><span>91%+ accuracy, deepfake detection model</span></li>
-      </ul>
+      <p class="lead">Hi there, I'm Sam. I'm currently studying math at the University of Waterloo with a specialization in machine learning. </p>
+      <p>I've always been interested in the ever expanding age of AI. I believe that in the right hands, AI will be the solution to some of the world's most pressing problems. </p>
+      <p>Whether it has been side projects or job experiences, I am constantly looking for ways to solve problems or make an impact with the tools that are given to me. Sometimes the solution is complicated, sometimes it is simple, but it's never boring.</p>
+      <p>Outside of AI, I believe in the importance of maintaining a healthy work-life balance and I love to workout and be outside. If you are interested in connecting feel free to reach out!</p>
     </div>
 
     <figure class="plate">
-      <img src="assets/img/frc3161.jpg" alt="FRC team 3161's competition robot on the field during a match." width="640" height="427" loading="lazy">
-      <figcaption><em>FIG 01</em> Team 3161 — FIRST Robotics competition field</figcaption>
+      <img src="assets/img/sam-headshot.png" alt="Sam Harvan Headshot." width="640" height="427" loading="lazy">
     </figure>
   </div>
 </section>
@@ -127,9 +119,7 @@
       <div class="job-body">
         <h3>Software Engineer <span class="at">MCAP Financial Corporation</span></h3>
         <ul>
-          <li>Built a full-stack Fastify/Vue single-page app for managing, generating and submitting business expense reports.</li>
-          <li>Engineered an OCR pipeline with SGLang and Qwen-VL-8b to extract and infer expense details from <strong>20,000+</strong> document uploads a year.</li>
-          <li>Implemented RBAC and OIDC-based SSO, integrated a MongoDB backend, and automated deployment through Docker and Azure DevOps CI/CD.</li>
+          <li>Developed an MVP which utilizes a VLM model and OCR to automate business expense management and expense report generation for BDMs across the country.</li>
         </ul>
         <p class="stack">Fastify · Vue · MongoDB · SGLang · Docker · Azure DevOps</p>
       </div>
@@ -144,8 +134,7 @@
       <div class="job-body">
         <h3>Firmware Developer <span class="at">UW Formula Electric</span></h3>
         <ul>
-          <li>Developed C-based embedded firmware for microcontroller systems — peripheral drivers and CAN protocols for electronic control unit communication.</li>
-          <li>Built signal-simulation frameworks to test ECU behaviour across voltage and input conditions, supporting data acquisition and control-board validation.</li>
+          <li>Wrote code for C-based embedded firmware for microcontroller systems such as peripheral drivers and CAN protocols for ECU communication and signal stimulation testing.</li>
         </ul>
         <p class="stack">C · CAN bus · Embedded drivers · Signal simulation</p>
       </div>
@@ -159,9 +148,7 @@
       <div class="job-body">
         <h3>Software Developer <span class="at">Holy Trinity FRC · Team 3161</span></h3>
         <ul>
-          <li>Led Java and Python programming workshops for <strong>15+</strong> new and inexperienced programmers.</li>
-          <li>Optimized robot movement with motion profiling and PID feedback control to sharpen drivetrain responsiveness and command tracking.</li>
-          <li>Implemented autonomous pathfinding with Choreo, cutting autonomous navigation time <strong>35%</strong> and helping the team qualify for the FIRST Robotics World Championship.</li>
+          <li>Lead development for drivetrain code and autonomus robotics software, qualifying for the 2023 and 2024 FIRST Championships in Houston.</li>
         </ul>
         <p class="stack">Java · Python · WPILib · Choreo · PID control</p>
       </div>
@@ -192,36 +179,20 @@
   <div class="projects">
     <article class="proj" data-reveal>
       <div class="proj-body">
-        <p class="proj-no">01 <span>/</span> 02</p>
+        <p class="proj-no">01</p>
         <p class="proj-tag">Computer vision · Deep learning</p>
         <h3>Deepfake AI<br>Detection System</h3>
         <p class="proj-lead">A computer-vision pipeline that separates real human video from synthetic, by hunting the facial artifacts a generator leaves behind.</p>
         <ul>
-          <li>OpenCV and NumPy pipeline detecting deepfake video from facial artifacts and temporal inconsistencies.</li>
-          <li>Transfer learning on an Xception-based CNN, with image preprocessing and stratified sampling for frame-level binary classification.</li>
-          <li>Trained on 2,000 FaceForensics++ videos; ROC-AUC analysis and loss monitoring to <strong>91%+</strong> accuracy.</li>
+          <li>Challenge: In an evolving age of AI, deepfake videos are slowly becoming harder and harder to identify. More specifically, sophisticated face deepfakes can be used to make fabricated events appear authentic. This project uses a 2D CNN to evalute frames from videos via frame pooling in an effort to spot synthetic artifacts.</li>
         </ul>
         <p class="stack">Python · PyTorch · OpenCV · NumPy</p>
       </div>
 
       <div class="proj-rail">
-        <!-- PLACEHOLDER: replace this whole <div class="plate ph"> with:
-             <figure class="plate">
-               <img src="assets/img/deepfake.jpg" alt="Describe the image here." width="1280" height="720" loading="lazy">
-               <figcaption><em>FIG 02</em> Deepfake detection — caption here</figcaption>
-             </figure>                                                        -->
-        <div class="plate ph">
-          <div class="ph-box">
-            <span class="ph-corner tl" aria-hidden="true"></span>
-            <span class="ph-corner tr" aria-hidden="true"></span>
-            <span class="ph-corner bl" aria-hidden="true"></span>
-            <span class="ph-corner br" aria-hidden="true"></span>
-            <p class="ph-label">Image pending</p>
-            <p class="ph-hint">assets/img/deepfake.jpg · 16:9</p>
-          </div>
-          <p class="ph-cap"><em>FIG 02</em> Deepfake detection</p>
-        </div>
-
+        <figure class="plate">
+          <img src="assets/img/neural-network.gif" alt="Neural Network." width="1280" height="720" loading="lazy">
+        </figure>
         <dl class="proj-spec">
           <div><dt>Type</dt><dd>Computer vision</dd></div>
           <div><dt>Model</dt><dd>Xception CNN</dd></div>
@@ -233,14 +204,12 @@
 
     <article class="proj" data-reveal>
       <div class="proj-body">
-        <p class="proj-no">02 <span>/</span> 02</p>
+        <p class="proj-no">02</p>
         <p class="proj-tag">Full-stack · NLP</p>
         <h3>TruLearn</h3>
         <p class="proj-lead">An AI study platform that reads your course material, quizzes you on it, and gets harder exactly where you're weak.</p>
         <ul>
-          <li>Full-stack platform that analyzes PDF study material and generates personalized quizzes through the Google Gemini API.</li>
-          <li>Grades open-ended answers with a DeBERTa-based NLI cross-encoder using bidirectional semantic inference.</li>
-          <li>Adaptive practice engine tracks accuracy across attempts, shifts question difficulty against performance thresholds, and regenerates targeted questions for weak areas.</li>
+          <li>Challenge: With the rise of AI chatbots, students are beginning to rely on these AI tools to do most of the learning. Instead of working through a problem and learning, all you need is one single prompt. TruLearn is an AI-powered application which generates personalized quizzes and then eveluates answers. In areas of perceived weakness, TruLearn employs a feedback-loop in an effort to help struggling students learn more effectively.</li>
         </ul>
         <p class="stack">React · TypeScript · Flask · Python · Gemini API · DeBERTa</p>
       </div>
@@ -248,7 +217,6 @@
       <div class="proj-rail">
         <figure class="plate">
           <img src="assets/img/trulearn.png" alt="TruLearn branding — a lightbulb mark beside the wordmark and the tagline “Think Harder, Learn Smarter”." width="664" height="240" loading="lazy">
-          <figcaption><em>FIG 03</em> TruLearn — think harder, learn smarter</figcaption>
         </figure>
 
         <dl class="proj-spec">
@@ -267,7 +235,7 @@
   <div class="sec-head sec-head-row">
     <div>
       <p class="idx">04 <span>/</span> Skills</p>
-      <h2 class="sec-title">The<br>toolbelt.</h2>
+      <h2 class="sec-title">My Tech<br>stack.</h2>
     </div>
     <button class="marquee-toggle" id="marqueeToggle" type="button">
       <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7" y="5" width="3.5" height="14" rx="1"/><rect x="13.5" y="5" width="3.5" height="14" rx="1"/></svg>
@@ -321,8 +289,8 @@
     <p class="idx">05 <span>/</span> Contact</p>
   </div>
 
-  <h2 class="contact-type">Let's build<br>something.</h2>
-  <p class="contact-lead">Open to co-op terms, side projects, and a good technical argument. The inbox is the fastest way in.</p>
+  <h2 class="contact-type">Let's Connect.</h2>
+  <!-- <p class="contact-lead">Open to co-op terms, side projects, and a good technical argument. The inbox is the fastest way in.</p> -->
 
   <ul class="links">
     <li>
