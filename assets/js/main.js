@@ -30,27 +30,49 @@
 
   /* ── sticky topbar ────────────────────────────────────── */
   const topbar = document.querySelector('.topbar');
-  const onScroll = () => topbar.classList.toggle('is-stuck', scrollY > 40);
-  addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
 
-  /* ── scrollspy ────────────────────────────────────────── */
+  /* ── active section drives the nav + the ambient wash ───── */
+  /* One deterministic pass: whichever section covers the middle
+     of the viewport owns the background and the nav highlight.
+     (An IntersectionObserver misses this when the user jumps
+     between sections via the nav or a hash link.)              */
   const navLinks = [...document.querySelectorAll('[data-nav]')];
-  const sections = navLinks
-    .map(a => document.querySelector(a.getAttribute('href')))
-    .filter(Boolean);
+  const ambLayers = [...document.querySelectorAll('.ambience span')];
+  const sections = [...document.querySelectorAll('[data-amb-trigger]')];
 
-  if ('IntersectionObserver' in window && sections.length) {
-    const spy = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        navLinks.forEach(a =>
-          a.setAttribute('aria-current', String(a.getAttribute('href') === '#' + e.target.id))
-        );
-      });
-    }, { rootMargin: '-45% 0px -50% 0px' });
-    sections.forEach(s => spy.observe(s));
-  }
+  let current = null;
+
+  const syncSection = () => {
+    topbar.classList.toggle('is-stuck', scrollY > 40);
+    if (!sections.length) return;
+
+    const mid = scrollY + innerHeight / 2;
+    let active = sections[0];
+    for (const sec of sections) {
+      const top = sec.offsetTop;
+      if (mid >= top) active = sec;
+    }
+    // the last section can never reach mid-viewport at max scroll
+    if (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) {
+      active = sections[sections.length - 1];
+    }
+    if (active.id === current) return;
+    current = active.id;
+
+    ambLayers.forEach(l => l.classList.toggle('is-on', l.dataset.amb === current));
+    navLinks.forEach(a =>
+      a.setAttribute('aria-current', String(a.getAttribute('href') === '#' + current))
+    );
+  };
+
+  let ticking = false;
+  addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { syncSection(); ticking = false; });
+  }, { passive: true });
+  addEventListener('resize', syncSection, { passive: true });
+  syncSection();
 
   /* ── mobile menu ──────────────────────────────────────── */
   const burger = document.getElementById('burger');

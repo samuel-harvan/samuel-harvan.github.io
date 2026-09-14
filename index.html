@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Samuel Harvan — Software &amp; Firmware Engineer</title>
+<title>Samuel Harvan — Personal Portfolio Website</title>
 <meta name="description" content="Samuel Harvan — Honours Mathematics at the University of Waterloo. Full-stack, machine learning and embedded firmware engineering.">
 <meta name="theme-color" content="#0A0A0A">
-<meta property="og:title" content="Samuel Harvan — Software &amp; Firmware Engineer">
+<meta property="og:title" content="Samuel Harvan — Personal Portfolio Website">
 <meta property="og:description" content="Honours Mathematics at the University of Waterloo. Full-stack, machine learning and embedded firmware.">
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/img/signature.png">
@@ -14,14 +14,29 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="assets/css/styles.css">
+<noscript><style>
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+  .sec-title, .contact-type { clip-path: none !important; transform: none !important; }
+  .ambience [data-amb="hero"] { opacity: 1; }
+  .mq-track { animation: none; width: 100%; }
+  .mq-set { flex-wrap: wrap; }
+</style></noscript>
 </head>
 <body>
 <a class="skip" href="#main">Skip to main content</a>
 
-<!-- ── grain + vignette ─────────────────────────────────────── -->
 <div class="grain" aria-hidden="true"></div>
 
-<!-- ── nav ──────────────────────────────────────────────────── -->
+<div class="ambience" aria-hidden="true">
+  <span data-amb="hero"></span>
+  <span data-amb="about"></span>
+  <span data-amb="journey"></span>
+  <span data-amb="projects"></span>
+  <span data-amb="skills"></span>
+  <span data-amb="contact"></span>
+</div>
+
+<!-- Nav -->
 <header class="topbar">
   <a class="mark" href="#top" aria-label="Samuel Harvan — back to top">
     <img src="assets/img/signature-white.png" alt="" width="848" height="463">
@@ -56,8 +71,8 @@
 <main id="main">
 <span id="top"></span>
 
-<!-- ── hero ─────────────────────────────────────────────────── -->
-<section class="hero">
+<!-- Hero -->
+<section class="hero" id="hero" data-amb-trigger>
 
   <h1 class="hero-type">
     <span class="cycler" id="cycler" aria-hidden="true">
@@ -82,8 +97,8 @@
   </a>
 </section>
 
-<!-- ── about ────────────────────────────────────────────────── -->
-<section class="sec" id="about" data-reveal>
+<!-- About -->
+<section class="sec" id="about" data-reveal data-amb-trigger data-ghost="About">
   <div class="sec-head">
     <p class="idx">01 <span>/</span> About</p>
     <h2 class="sec-title">A little&nbsp;<br>about me&nbsp;.</h2>
@@ -91,8 +106,8 @@
 
   <div class="about-grid">
     <div class="about-copy">
-      <p class="lead">Hi there, I'm Sam. I'm currently studying math at the University of Waterloo with a specialization in machine learning. </p>
-      <p>I've always been interested in the ever expanding age of AI. I believe that in the right hands, AI will be the solution to some of the world's most pressing problems. </p>
+      <p class="lead">I'm currently studying math at the University of Waterloo with a specialization in computing and machine learning. 
+      <p>My choice to study math has always been rooted in my interest in the ever expanding age of AI. I believe that in the right hands, AI will be the solution to some of the world's most pressing problems. </p>
       <p>Whether it has been side projects or job experiences, I am constantly looking for ways to solve problems or make an impact with the tools that are given to me. Sometimes the solution is complicated, sometimes it is simple, but it's never boring.</p>
       <p>Outside of AI, I believe in the importance of maintaining a healthy work-life balance and I love to workout and be outside. If you are interested in connecting feel free to reach out!</p>
     </div>
@@ -103,8 +118,8 @@
   </div>
 </section>
 
-<!-- ── journey ──────────────────────────────────────────────── -->
-<section class="sec" id="journey" data-reveal>
+<!-- Journey -->
+<section class="sec" id="journey" data-reveal data-amb-trigger data-ghost="Journey">
   <div class="sec-head">
     <p class="idx">02 <span>/</span> Journey</p>
     <h2 class="sec-title">Where I've<br>been building.</h2>
@@ -123,7 +138,6 @@
         </ul>
         <p class="stack">Fastify · Vue · MongoDB · SGLang · Docker · Azure DevOps</p>
       </div>
-      <img class="job-logo" src="assets/img/mcap.jpg" alt="MCAP Financial Corporation logo" width="356" height="356" loading="lazy">
     </li>
 
     <li class="job" data-reveal>
@@ -153,24 +167,11 @@
         <p class="stack">Java · Python · WPILib · Choreo · PID control</p>
       </div>
     </li>
-
-    <li class="job job-edu" data-reveal>
-      <div class="job-meta">
-        <p class="job-period">Sept 2025 — Present</p>
-        <p class="job-place">Waterloo, ON</p>
-      </div>
-      <div class="job-body">
-        <h3>Bachelor of Mathematics <span class="at">University of Waterloo</span></h3>
-        <ul>
-          <li>Honours Mathematics · President's Scholarship of Distinction.</li>
-        </ul>
-      </div>
-    </li>
   </ol>
 </section>
 
-<!-- ── projects ─────────────────────────────────────────────── -->
-<section class="sec" id="projects" data-reveal>
+<!-- Projects --> 
+<section class="sec" id="projects" data-reveal data-amb-trigger data-ghost="Work">
   <div class="sec-head">
     <p class="idx">03 <span>/</span> Projects</p>
     <h2 class="sec-title">What I've been<br>working on.</h2>
@@ -231,7 +232,7 @@
 </section>
 
 <!-- ── skills ───────────────────────────────────────────────── -->
-<section class="sec" id="skills" data-reveal>
+<section class="sec" id="skills" data-reveal data-amb-trigger data-ghost="Skills">
   <div class="sec-head sec-head-row">
     <div>
       <p class="idx">04 <span>/</span> Skills</p>
@@ -284,7 +285,7 @@
 </section>
 
 <!-- ── contact ──────────────────────────────────────────────── -->
-<section class="sec sec-contact" id="contact" data-reveal>
+<section class="sec sec-contact" id="contact" data-reveal data-amb-trigger data-ghost="Hello">
   <div class="sec-head">
     <p class="idx">05 <span>/</span> Contact</p>
   </div>

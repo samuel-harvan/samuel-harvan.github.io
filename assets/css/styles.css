@@ -77,6 +77,65 @@ a { color: inherit; text-decoration: none; }
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* ── ambient wash ───────────────────────────────────────── */
+/* One gradient layer per section, crossfaded as that section
+   takes over. Replaces hard divider rules: sections now bleed
+   into one another through a shifting field instead of a line. */
+.ambience { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.ambience span {
+  position: absolute; inset: 0;
+  opacity: 0;
+  transition: opacity 1.4s var(--ease);
+  will-change: opacity;
+}
+.ambience span.is-on { opacity: 1; }
+
+.ambience [data-amb="hero"] {
+  background:
+    radial-gradient(ellipse 75% 55% at 50% 38%, rgba(255, 74, 28, .13), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 82% 88%, rgba(255, 122, 85, .06), transparent 70%);
+}
+.ambience [data-amb="about"] {
+  background:
+    radial-gradient(ellipse 70% 60% at 18% 30%, rgba(96, 132, 255, .09), transparent 72%),
+    radial-gradient(ellipse 55% 45% at 88% 76%, rgba(255, 74, 28, .05), transparent 70%);
+}
+.ambience [data-amb="journey"] {
+  background:
+    radial-gradient(ellipse 80% 55% at 78% 26%, rgba(255, 158, 64, .08), transparent 72%),
+    radial-gradient(ellipse 60% 50% at 12% 82%, rgba(120, 90, 200, .05), transparent 70%);
+}
+.ambience [data-amb="projects"] {
+  background:
+    radial-gradient(ellipse 72% 58% at 30% 22%, rgba(150, 92, 255, .10), transparent 72%),
+    radial-gradient(ellipse 58% 48% at 84% 80%, rgba(60, 190, 190, .05), transparent 70%);
+}
+.ambience [data-amb="skills"] {
+  background:
+    radial-gradient(ellipse 76% 52% at 62% 34%, rgba(56, 196, 170, .08), transparent 72%),
+    radial-gradient(ellipse 55% 45% at 10% 78%, rgba(255, 74, 28, .05), transparent 70%);
+}
+.ambience [data-amb="contact"] {
+  background:
+    radial-gradient(ellipse 85% 65% at 50% 60%, rgba(255, 74, 28, .16), transparent 72%);
+}
+
+/* ── ghost section watermark ────────────────────────────── */
+.sec[data-ghost]::before {
+  content: attr(data-ghost);
+  position: absolute;
+  top: clamp(24px, 5vw, 64px); right: var(--gut);
+  z-index: -1;
+  font-size: clamp(90px, 17vw, 260px);
+  line-height: .8;
+  letter-spacing: -.04em;
+  font-variation-settings: 'wdth' 80, 'wght' 800;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, .055);
+  pointer-events: none;
+  user-select: none;
+}
+
 /* ════ NAV ════════════════════════════════════════════════ */
 .topbar {
   position: fixed; inset: 0 0 auto 0; z-index: 100;
@@ -181,12 +240,6 @@ a { color: inherit; text-decoration: none; }
   max-width: var(--maxw); margin: 0 auto;
   text-align: center;
 }
-.hero::after {
-  content: ''; position: absolute; inset: 0; z-index: -1;
-  background: radial-gradient(ellipse 70% 55% at 50% 42%, rgba(255,74,28,.09), transparent 70%);
-  pointer-events: none;
-}
-
 .kicker {
   font-family: var(--mono);
   font-size: 12px; letter-spacing: .3em; text-transform: uppercase;
@@ -256,8 +309,7 @@ a { color: inherit; text-decoration: none; }
 .sec {
   position: relative; z-index: 2;
   max-width: var(--maxw); margin: 0 auto;
-  padding: clamp(72px, 11vw, var(--s8)) var(--gut);
-  border-top: 1px solid var(--line);
+  padding: clamp(96px, 14vw, 200px) var(--gut);
 }
 
 .sec-head { margin-bottom: clamp(40px, 6vw, 72px); }
@@ -386,7 +438,7 @@ a { color: inherit; text-decoration: none; }
 .job-edu .job-body h3 .at { color: var(--muted); }
 
 /* ── projects ───────────────────────────────────────────── */
-.projects { display: flex; flex-direction: column; gap: 1px; background: var(--line); border-block: 1px solid var(--line); }
+.projects { display: flex; flex-direction: column; gap: 1px; background: var(--line); }
 
 .proj {
   display: grid;
@@ -640,8 +692,7 @@ a { color: inherit; text-decoration: none; }
 .foot {
   position: relative; z-index: 2;
   max-width: var(--maxw); margin: 0 auto;
-  padding: var(--s5) var(--gut) var(--s6);
-  border-top: 1px solid var(--line);
+  padding: var(--s7) var(--gut) var(--s6);
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--s3); flex-wrap: wrap;
 }
@@ -657,9 +708,29 @@ a { color: inherit; text-decoration: none; }
 [data-reveal] {
   opacity: 0;
   transform: translateY(26px);
-  transition: opacity .7s var(--ease), transform .7s var(--ease);
+  transition: opacity .55s var(--ease), transform .55s var(--ease);
+  transition-delay: var(--d, 0ms);
 }
 [data-reveal].is-in { opacity: 1; transform: none; }
+
+/* section titles wipe up from behind their own baseline */
+.sec-title, .contact-type {
+  clip-path: inset(0 0 108% 0);
+  transform: translateY(.14em);
+  transition: clip-path .9s var(--ease) .1s, transform .9s var(--ease) .1s;
+}
+.is-in .sec-title, .is-in .contact-type {
+  clip-path: inset(0 0 -18% 0);
+  transform: none;
+}
+
+/* children arrive after their section, 70ms apart (max ~8) */
+.journey .job:nth-child(1) { --d: 80ms; }
+.journey .job:nth-child(2) { --d: 150ms; }
+.journey .job:nth-child(3) { --d: 220ms; }
+.journey .job:nth-child(4) { --d: 290ms; }
+.projects .proj:nth-child(1) { --d: 80ms; }
+.projects .proj:nth-child(2) { --d: 150ms; }
 
 /* ════ RESPONSIVE ═════════════════════════════════════════ */
 @media (max-width: 1024px) {
@@ -709,6 +780,8 @@ a { color: inherit; text-decoration: none; }
   }
   [data-reveal] { opacity: 1; transform: none; }
   .cycler .word { filter: none; transform: none; }
+  .ambience span { transition: none; }
+  .sec-title, .contact-type { clip-path: none; transform: none; }
   .mq-track { animation: none; width: 100%; }
   .mq-set { flex-wrap: wrap; gap: var(--s3) var(--s4); }
   .mq-set[aria-hidden="true"] { display: none; }
