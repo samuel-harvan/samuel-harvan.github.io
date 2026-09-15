@@ -2,15 +2,41 @@
 (() => {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ── hero word cycler ─────────────────────────────────── */
-  const words = document.querySelectorAll('#cycler .word');
-  if (words.length > 1 && !reduced) {
-    let i = 0;
-    setInterval(() => {
-      words[i].classList.remove('is-on');
-      i = (i + 1) % words.length;
-      words[i].classList.add('is-on');
-    }, 2600);
+  /* ── hero: type / hold / backspace through the verbs ──── */
+  const typedText = document.getElementById('typedText');
+  const VERBS = ['code.', 'learn.', 'build.', 'solve.', 'travel.', 'exercise.'];
+
+  if (typedText) {
+    if (reduced) {
+      // no motion: state the whole list instead of animating through it
+      typedText.textContent = VERBS.slice(0, -1).join(', ') + ' and ' + VERBS.at(-1) + '.';
+    } else {
+      const slot = typedText.closest('.typed');
+      const TYPE = 85, ERASE = 40, HOLD = 1500, GAP = 400;
+      let w = 0, i = 0, erasing = false;
+
+      const tick = () => {
+        const word = VERBS[w];
+        typedText.textContent = word.slice(0, i);
+
+        if (!erasing && i === word.length) {
+          erasing = true;
+          slot.classList.remove('is-busy');
+          return setTimeout(tick, HOLD);
+        }
+        if (erasing && i === 0) {
+          erasing = false;
+          w = (w + 1) % VERBS.length;
+          slot.classList.remove('is-busy');
+          return setTimeout(tick, GAP);
+        }
+
+        slot.classList.add('is-busy');
+        i += erasing ? -1 : 1;
+        setTimeout(tick, erasing ? ERASE : TYPE);
+      };
+      setTimeout(tick, 600);
+    }
   }
 
   /* ── scroll reveal ────────────────────────────────────── */
