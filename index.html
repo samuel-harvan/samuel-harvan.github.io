@@ -105,62 +105,87 @@
       <p>Outside of AI, I believe in the importance of maintaining a healthy work-life balance and I love to workout and be outside. If you are interested in connecting feel free to reach out!</p>
     </div>
 
-    <figure class="plate">
-      <img src="assets/img/sam-headshot.png" alt="Sam Harvan Headshot." width="640" height="427" loading="lazy">
-    </figure>
+    <div class="about-media">
+      <figure class="plate">
+        <img src="assets/img/sam-headshot.png" alt="Sam Harvan Headshot." width="640" height="427" loading="lazy">
+      </figure>
+    </div>
   </div>
 </section>
 
 <!-- Journey -->
-<section class="sec" id="journey" data-reveal data-section style="--z: 2" data-ghost="Journey">
-  <div class="sec-head">
-    <p class="idx">02 <span>/</span> Journey</p>
-    <h2 class="sec-title">Where I've<br>been building.</h2>
+<section class="sec sec-journey" id="journey" data-reveal data-section style="--z: 2">
+  <div class="journey-intro">
+    <div class="journey-intro-in">
+      <h2 class="journey-word" aria-label="My Journey"><span class="jw-line"><span class="jw-c">M</span><span class="jw-c">y</span></span><span class="jw-line"><span class="jw-c">J</span><span class="jw-c">o</span><span class="jw-c">u</span><span class="jw-c">r</span><span class="jw-c">n</span><span class="jw-c">e</span><span class="jw-c">y</span></span></h2>
+    </div>
   </div>
 
-  <ol class="journey">
-    <li class="job" data-reveal>
-      <div class="job-meta">
-        <p class="job-period">May 2026 — Aug 2026</p>
-        <p class="job-place">Waterloo, ON</p>
-      </div>
-      <div class="job-body">
-        <h3>Software Engineer <span class="at">MCAP Financial Corporation</span></h3>
-        <ul>
-          <li>Developed an MVP which utilizes a VLM model and OCR to automate business expense management and expense report generation for BDMs across the country.</li>
-        </ul>
-        <p class="stack">Fastify · Vue · MongoDB · Javascript · Typescript · SGLang · Docker · Azure DevOps</p>
-      </div>
-    </li>
+  <div class="journey-layout">
 
-    <li class="job" data-reveal>
-      <div class="job-meta">
-        <p class="job-period">Sept 2025 — May 2026</p>
-        <p class="job-place">Waterloo, ON</p>
+    <!-- the label pins while the path scrolls past it -->
+    <div class="journey-rail">
+      <div class="journey-rail-in">
+        <p class="idx">02 <span>/</span> Journey</p>
+        <p class="journey-counter" aria-hidden="true">
+          <span class="jc-now">01</span><span class="jc-sep">/</span><span class="jc-total">03</span>
+        </p>
       </div>
-      <div class="job-body">
-        <h3>Firmware Developer <span class="at">UW Formula Electric</span></h3>
-        <ul>
-          <li>Wrote C-based embedded firmware for microcontroller systems, including peripheral drivers and CAN communication protocols for ECUs, and developed signal simulation tools for testing ECU functionality.</li>
-        </ul>
-        <p class="stack">C · CAN · Embedded drivers · Microcontrollers</p>
-      </div>
-    </li>
+    </div>
 
-    <li class="job" data-reveal>
-      <div class="job-meta">
-        <p class="job-period">Sept 2023 — June 2025</p>
-        <p class="job-place">Oakville, ON</p>
-      </div>
-      <div class="job-body">
-        <h3>Software Developer <span class="at">Holy Trinity FRC · Team 3161</span></h3>
-        <ul>
-          <li>Lead development for drivetrain code and autonomus robotics software, qualifying for the 2023 and 2024 FIRST Championships in Houston.</li>
-        </ul>
-        <p class="stack">Java · WPILib · Choreo · PID · OOP</p>
-      </div>
-    </li>
-  </ol>
+    <!-- the path itself: a line that draws as you walk it -->
+    <div class="journey-track">
+      <div class="path" aria-hidden="true"><span class="path-fill"></span></div>
+
+      <ol class="journey">
+        <li class="job">
+          <span class="job-node" aria-hidden="true"></span>
+          <div class="job-meta">
+            <p class="job-period">Sept 2023 — June 2025</p>
+            <p class="job-place">Oakville, ON</p>
+          </div>
+          <div class="job-body">
+            <h3>Software Developer <span class="at">Holy Trinity FRC · Team 3161</span></h3>
+            <ul>
+              <li>Lead development for drivetrain code and autonomus robotics software, qualifying for the 2023 and 2024 FIRST Championships in Houston.</li>
+            </ul>
+            <p class="stack">Java · WPILib · Choreo · PID · OOP</p>
+          </div>
+        </li>
+
+        <li class="job">
+          <span class="job-node" aria-hidden="true"></span>
+          <div class="job-meta">
+            <p class="job-period">Sept 2025 — May 2026</p>
+            <p class="job-place">Waterloo, ON</p>
+          </div>
+          <div class="job-body">
+            <h3>Firmware Developer <span class="at">UW Formula Electric</span></h3>
+            <ul>
+              <li>Wrote C-based embedded firmware for microcontroller systems, including peripheral drivers and CAN communication protocols for ECUs, and developed signal simulation tools for testing ECU functionality.</li>
+            </ul>
+            <p class="stack">C · CAN · Embedded drivers · Microcontrollers</p>
+          </div>
+        </li>
+
+        <li class="job">
+          <span class="job-node" aria-hidden="true"></span>
+          <div class="job-meta">
+            <p class="job-period">May 2026 — Aug 2026</p>
+            <p class="job-place">Waterloo, ON</p>
+          </div>
+          <div class="job-body">
+            <h3>Software Engineer <span class="at">MCAP Financial Corporation</span></h3>
+            <ul>
+              <li>Developed an MVP which utilizes a VLM model and OCR to automate business expense management and expense report generation for BDMs across the country.</li>
+            </ul>
+            <p class="stack">Fastify · Vue · MongoDB · Javascript · Typescript · SGLang · Docker · Azure DevOps</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+  </div>
 </section>
 
 <!-- Projects --> 

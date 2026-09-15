@@ -73,7 +73,7 @@
   /* Lists that should peel in with an indexed stagger. */
   const CASCADE = [
     '.hud > div', '.facts li', '.about-grid > *',
-    '.journey .job', '.projects .proj',
+    '.projects .proj',
     '.marquees .mq-row', '.domains > div', '.links li'
   ].join(', ');
 
@@ -157,7 +157,11 @@
             ease: 'none',
             scrollTrigger: {
               trigger: next,
-              start: 'top bottom',   // next panel starts covering
+              /* Start the recede once the incoming panel is well into
+                 view, not the instant it appears — otherwise the
+                 outgoing section (and its sticky rail) is already
+                 scaling away while its last row is still being read. */
+              start: 'top 72%',
               end: 'top top',        // it has fully taken over
               scrub: true
             }
@@ -165,6 +169,134 @@
         );
       });
 
+
+      /* ── About: the headshot takes on colour as it passes ──
+         Scrubbed across the image's own travel through the
+         viewport. Driven through a custom property so it
+         composes with the contrast tweak instead of two rules
+         fighting over `filter`.                              */
+      const aboutMedia = document.querySelector('.about-media');
+      if (aboutMedia) {
+        const shot = aboutMedia.querySelector('img');
+        gsap.fromTo(shot,
+          { '--gray': 1 },
+          {
+            '--gray': 0,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: aboutMedia,
+              start: 'top 88%',   // colour starts as it enters
+              end: 'bottom 40%',  // fully saturated on the way out
+              scrub: 0.8
+            }
+          }
+        );
+      }
+
+      /* ── "My Journey" scatters as you scroll into the timeline ──
+         Each letter gets its own random vector, resolved once per
+         refresh so the break-up is stable while scrubbing. */
+      const intro = document.querySelector('.journey-intro');
+      if (intro) {
+        const chars = gsap.utils.toArray('.jw-c', intro);
+        const rand = gsap.utils.random;
+
+        gsap.to(chars, {
+          x: () => rand(-0.75, 0.75) * innerWidth,
+          y: () => rand(-0.7, 0.7) * innerHeight,
+          rotation: () => rand(-140, 140),
+          scale: () => rand(0.35, 1.7),
+          opacity: 0,
+          ease: 'none',
+          stagger: { amount: 0.25, from: 'random' },
+          scrollTrigger: {
+            trigger: intro,
+            start: '4% top',       // breaks up almost as soon as it lands
+            end: 'bottom bottom',
+            scrub: 0.6,
+            invalidateOnRefresh: true
+          }
+        });
+      }
+
+      /* ══ JOURNEY PATH ═════════════════════════════════════
+         A drawn line the reader walks down. Experiences sit dim
+         ahead of them and light up as the path reaches each node,
+         so the list is uncovered by scrolling rather than shown
+         all at once. Rows stay lit once passed.               */
+      const track = document.querySelector('.journey-track');
+      if (track) {
+        const jobs = gsap.utils.toArray('.journey .job', track);
+        const fill = track.querySelector('.path-fill');
+        const now = document.querySelector('.jc-now');
+        const total = document.querySelector('.jc-total');
+        const pad = n => String(n).padStart(2, '0');
+
+        if (total) total.textContent = pad(jobs.length);
+
+
+        /* A dot counts as reached when the drawn line has actually
+           passed it. Reading the rendered scaleY (not raw scroll
+           progress) means the scrub's lag is included, so the dot
+           lights at the moment the red edge crosses it. */
+        const pathEl = track.querySelector('.path');
+        let nodeAt = [];
+
+        /* Use layout offsets, not rects: unreached rows are held at
+           y:42 by GSAP, so a rect would read every node 42px low and
+           the counter would lag a step behind the line. offsetTop is
+           unaffected by transforms. */
+        const measure = () => {
+          const pathH = pathEl.offsetHeight;
+          if (!pathH) return;
+          nodeAt = jobs.map(job => {
+            const node = job.querySelector('.job-node');
+            const y = job.offsetTop + node.offsetTop + node.offsetHeight / 2;
+            return (y - pathEl.offsetTop) / pathH;
+          });
+        };
+
+        const syncCount = () => {
+          if (now) now.textContent = pad(jobs.filter(j => j.classList.contains('is-open')).length || 1);
+        };
+
+        jobs.forEach(job => gsap.set(job, { opacity: 0.16, y: 42 }));
+
+        const setReached = (job, reached) => {
+          if (reached === job.classList.contains('is-open')) return;
+          job.classList.toggle('is-open', reached);
+          gsap.to(job, {
+            opacity: reached ? 1 : 0.16,
+            y: reached ? 0 : 42,
+            overwrite: 'auto'
+          });
+        };
+
+        gsap.fromTo(fill, { scaleY: 0 }, {
+          scaleY: 1, ease: 'none',
+          scrollTrigger: {
+            trigger: pathEl,
+            start: 'top 55%',
+            end: 'bottom 40%',
+            scrub: 0.8,
+            onRefresh: measure,
+            onUpdate: () => {
+              if (!nodeAt.length) measure();
+              const drawn = gsap.getProperty(fill, 'scaleY');
+              jobs.forEach((job, i) => setReached(job, drawn >= nodeAt[i]));
+              syncCount();
+            }
+          }
+        });
+
+        jobs.forEach(job => {
+          /* whichever row you are standing on reads brightest */
+          ScrollTrigger.create({
+            trigger: job, start: 'top 52%', end: 'bottom 52%',
+            toggleClass: { targets: job, className: 'is-live' }
+          });
+        });
+      }
 
       /* — anything left over reveals on its own — */
       document.querySelectorAll('[data-reveal]').forEach(el => {
@@ -174,6 +306,10 @@
           scrollTrigger: { trigger: el, start: 'top 85%', once: true }
         });
       });
+
+      /* fonts and images settle after first paint and shift every
+         trigger's start/end; recalculate once everything has loaded */
+      addEventListener('load', () => ScrollTrigger.refresh());
 
       return () => ScrollTrigger.getAll().forEach(t => t.kill());
     });
@@ -264,6 +400,28 @@
   }, { passive: true });
   addEventListener('resize', syncSection, { passive: true });
   syncSection();
+
+  /* ── in-page links go through Lenis ───────────────────────
+     A bare hash link does a native jump that Lenis immediately
+     overrides, which is why the first click appeared to do
+     nothing and a second was needed. Drive the scroll directly. */
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      const hash = link.getAttribute('href');
+      if (!hash || hash === '#') return;
+      const target = document.querySelector(hash);
+      if (!target) return;
+
+      e.preventDefault();
+      const top = hash === '#top' ? 0 : target;
+
+      if (window.__lenis) window.__lenis.scrollTo(top, { offset: -80 });
+      else if (typeof top === 'number') scrollTo({ top, behavior: 'smooth' });
+      else target.scrollIntoView({ behavior: 'smooth' });
+
+      if (history.replaceState) history.replaceState(null, '', hash);
+    });
+  });
 
   /* ── mobile menu: curtain drop on the shared timing ─────── */
   const burger = document.getElementById('burger');
