@@ -255,23 +255,39 @@ a { color: inherit; text-decoration: none; }
 
 .hero-type {
   margin: clamp(16px, 3vw, 34px) 0 0;
-  font-size: clamp(62px, 17vw, 260px);
-  line-height: .9;
-  letter-spacing: -.035em;
-  font-variation-settings: 'wdth' 82, 'wght' 800;
+  font-size: clamp(30px, 7vw, 100px);
+  line-height: 1.06;
+  letter-spacing: -.03em;
+  font-variation-settings: 'wdth' 88, 'wght' 760;
+  /* both lines share one left edge; the block itself stays centred */
+  text-align: left;
+  width: max-content;
+  max-width: 100%;
+  margin-inline: auto;
 }
-.cycler {
-  display: grid;
-  place-items: center;
+.hero-greet, .hero-love { display: block; }
+
+/* typed word slot ------------------------------------------- */
+.typed { display: inline-grid; vertical-align: baseline; }
+.typed-sizer,
+.typed-live { grid-area: 1 / 1; white-space: nowrap; }
+.typed-sizer { visibility: hidden; padding-right: .14em; }
+.typed-live { justify-self: start; }
+.typed-text { color: var(--accent); }
+
+.caret {
+  display: inline-block;
+  width: .055em;
+  height: .82em;
+  margin-left: .04em;
+  vertical-align: -.06em;
+  background: var(--accent);
+  animation: caret-blink 1s steps(1) infinite;
 }
-.cycler .word {
-  grid-area: 1 / 1;
-  opacity: 0;
-  transform: translateY(.14em);
-  filter: blur(6px);
-  transition: opacity .55s var(--ease), transform .55s var(--ease), filter .55s var(--ease);
-}
-.cycler .word.is-on { opacity: 1; transform: none; filter: none; }
+/* hold the caret solid while characters are moving */
+.typed.is-busy .caret { animation: none; opacity: 1; }
+
+@keyframes caret-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 
 .hud {
   display: grid;
@@ -779,7 +795,11 @@ a { color: inherit; text-decoration: none; }
     transition-duration: .001ms !important;
   }
   [data-reveal] { opacity: 1; transform: none; }
-  .cycler .word { filter: none; transform: none; }
+  /* no typing: state the whole list, sized down so the greeting leads */
+  .caret { animation: none; display: none; }
+  .typed-sizer { display: none; }
+  .typed-live { position: static; white-space: normal; }
+  .hero-love { font-size: .62em; margin-top: .5em; }
   .ambience span { transition: none; }
   .sec-title, .contact-type { clip-path: none; transform: none; }
   .mq-track { animation: none; width: 100%; }
