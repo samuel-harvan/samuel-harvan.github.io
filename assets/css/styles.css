@@ -913,7 +913,7 @@ a { color: inherit; text-decoration: none; }
 /* About runs straight into the word — the intro panel supplies its
    own breathing room, so the usual section padding is dead space */
 #about { padding-bottom: clamp(8px, 1.5vw, 24px); }
-.sec-journey { padding-top: var(--overlap); }
+.sec-journey { padding-top: 28px; }   /* clears About without a void */
 
 .journey-intro { position: relative; height: 185vh; }
 
@@ -921,7 +921,6 @@ a { color: inherit; text-decoration: none; }
   position: sticky; top: 0;
   height: 100svh;
   display: grid; place-items: center;
-  padding-bottom: 20vh;          /* sits above centre, so it shows up sooner */
   overflow: hidden;              /* letters vanish at the edges */
 }
 

@@ -211,7 +211,7 @@
           stagger: { amount: 0.25, from: 'random' },
           scrollTrigger: {
             trigger: intro,
-            start: '4% top',       // breaks up almost as soon as it lands
+            start: '14% top',      // a bit more scroll before it breaks up
             end: 'bottom bottom',
             scrub: 0.6,
             invalidateOnRefresh: true
