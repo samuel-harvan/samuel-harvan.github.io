@@ -1,5 +1,189 @@
-/* Samuel Harvan — portfolio behaviour. No dependencies. */
+/* ════════════════════════════════════════════════════════════
+   Samuel Harvan — portfolio behaviour
+   Motion: GSAP + ScrollTrigger, one shared timing system.
+   ════════════════════════════════════════════════════════════ */
 (() => {
+  const root = document.documentElement;
+  const hasGSAP = typeof gsap !== 'undefined';
+
+  /* If the GSAP CDN is blocked, drop the pre-paint hidden states so the
+     page renders as plain static content rather than staying invisible. */
+  if (!hasGSAP) root.classList.remove('motion-ready');
+
+  /* ════ MOTION SYSTEM ══════════════════════════════════════
+     Every entry sequence, cascade, curtain and hover shares these
+     numbers. They mirror --ease / --dur / --stagger in the CSS, so
+     JS tweens and CSS transitions feel like one system.          */
+  const MOTION = {
+    dur: 0.4,        // baseline window
+    fast: 0.25,      // exits, ~60% of baseline
+    stagger: 0.05,   // indexed cascade step
+    ease: 'editorial'
+  };
+
+  if (hasGSAP) {
+    /* cubic-bezier(0.16, 1, 0.3, 1) as a GSAP ease — Newton's method
+       on the x-curve, then read y. Exact, and avoids loading a plugin. */
+    const cubicBezier = (x1, y1, x2, y2) => {
+      const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+      const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+      const xAt = t => ((ax * t + bx) * t + cx) * t;
+      const dxAt = t => (3 * ax * t + 2 * bx) * t + cx;
+      return x => {
+        let t = x;
+        for (let i = 0; i < 8; i++) {
+          const err = xAt(t) - x;
+          if (Math.abs(err) < 1e-5) break;
+          const d = dxAt(t);
+          if (Math.abs(d) < 1e-6) break;
+          t -= err / d;
+        }
+        return ((ay * t + by) * t + cy) * t;
+      };
+    };
+    gsap.registerEase(MOTION.ease, cubicBezier(0.16, 1, 0.3, 1));
+    if (window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+    gsap.defaults({ duration: MOTION.dur, ease: MOTION.ease });
+
+    /* Lenis drives scrolling; GSAP's ticker drives Lenis, and ScrollTrigger
+       reads Lenis' position. One clock, so the section stack never desyncs
+       from the scrubbed transitions. */
+    if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const lenis = new Lenis({ duration: 1.05, smoothWheel: true });
+      lenis.on('scroll', () => window.ScrollTrigger && ScrollTrigger.update());
+      gsap.ticker.add(t => lenis.raf(t * 1000));
+      gsap.ticker.lagSmoothing(0);
+      window.__lenis = lenis;
+    }
+  }
+
+  /* ── wrap header typography in overflow-hidden line masks ──
+     Titles already break their own lines with <br>, so split on that
+     and give each line its own mask. Returns the inner line spans. */
+  const maskLines = el => {
+    if (!el || el.dataset.masked) return [];
+    el.dataset.masked = '1';
+    el.innerHTML = el.innerHTML
+      .split(/<br\s*\/?>/i)
+      .map(line => `<span class="mask"><span class="mask-line">${line}</span></span>`)
+      .join('');
+    return [...el.querySelectorAll('.mask-line')];
+  };
+
+  /* Lists that should peel in with an indexed stagger. */
+  const CASCADE = [
+    '.hud > div', '.facts li', '.about-grid > *',
+    '.journey .job', '.projects .proj',
+    '.marquees .mq-row', '.domains > div', '.links li'
+  ].join(', ');
+
+  /* ════ ENTRY SEQUENCES ════════════════════════════════════ */
+  if (hasGSAP) {
+    const mm = gsap.matchMedia();
+
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      /* — hero: masks up, then the supporting furniture — */
+      const hero = document.querySelector('.hero');
+      if (hero) {
+        const heroLines = [
+          ...maskLines(hero.querySelector('.hero-greet')),
+          ...maskLines(hero.querySelector('.hero-love'))
+        ];
+        gsap.timeline({ delay: 0.15 })
+          .set(hero.querySelector('[data-reveal]'), { opacity: 1 })
+          .fromTo(heroLines,
+            { yPercent: 100, y: 0 },
+            { yPercent: 0, y: 0, stagger: MOTION.stagger * 2 })
+          .fromTo(hero.querySelectorAll('.hud > div'),
+            { yPercent: 12, opacity: 0 },
+            { yPercent: 0, opacity: 1, stagger: MOTION.stagger }, '-=0.2')
+          .fromTo(hero.querySelector('.scrollcue'),
+            { opacity: 0 }, { opacity: 1 }, '-=0.25');
+      }
+
+      /* — each section: index → title masks → cascaded content — */
+      document.querySelectorAll('.sec[data-reveal]').forEach(sec => {
+        const idx = sec.querySelector('.idx');
+        const title = sec.querySelector('.sec-title, .contact-type');
+        const lines = maskLines(title);
+        const items = [...sec.querySelectorAll(CASCADE)];
+        const body = [...sec.querySelectorAll('.lead, .contact-lead')];
+
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: sec, start: 'top 78%', once: true }
+        });
+
+        tl.set(sec, { opacity: 1 });
+        if (idx) tl.fromTo(idx,
+          { yPercent: 40, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: MOTION.fast }, 0);
+        if (lines.length) tl.fromTo(lines,
+          { yPercent: 100, y: 0 },
+          { yPercent: 0, y: 0, stagger: MOTION.stagger * 2 }, 0.05);
+        if (body.length) tl.fromTo(body,
+          { y: 18, opacity: 0 }, { y: 0, opacity: 1 }, '-=0.25');
+
+        /* indexed stagger — item i enters at i * 0.05s */
+        if (items.length) {
+          tl.fromTo(items,
+            { y: 24, opacity: 0 },
+            { y: 0, opacity: 1, stagger: MOTION.stagger }, '-=0.2');
+        }
+      });
+
+      /* ── full section transitions ──────────────────────────
+         Each panel is opaque and overlaps the previous one, so the
+         incoming section physically covers the outgoing one. As it
+         does, the outgoing panel recedes: scaled back, dimmed and
+         pushed up, which reads as depth rather than a crossfade. */
+      const panels = [...document.querySelectorAll('.hero, .sec')];
+
+      panels.forEach((panel, i) => {
+        const next = panels[i + 1];
+        if (!next) return;
+
+        /* The hero is pinned at top:0, so if it only dimmed it would show
+           through every later panel as those scale back. autoAlpha takes it
+           to visibility:hidden instead. Mid-stack panels keep a little
+           opacity so the recede reads as depth. */
+        const isHero = panel.classList.contains('hero');
+
+        gsap.fromTo(panel,
+          { scale: 1, autoAlpha: 1, yPercent: 0 },
+          {
+            scale: 0.93,
+            autoAlpha: isHero ? 0 : 0.25,
+            yPercent: -4,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: next,
+              start: 'top bottom',   // next panel starts covering
+              end: 'top top',        // it has fully taken over
+              scrub: true
+            }
+          }
+        );
+      });
+
+
+      /* — anything left over reveals on its own — */
+      document.querySelectorAll('[data-reveal]').forEach(el => {
+        if (el.closest('.hero') || el.matches('.sec[data-reveal]')) return;
+        gsap.to(el, {
+          opacity: 1,
+          scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+        });
+      });
+
+      return () => ScrollTrigger.getAll().forEach(t => t.kill());
+    });
+
+    /* reduced motion: show everything, animate nothing */
+    mm.add('(prefers-reduced-motion: reduce)', () => {
+      root.classList.remove('motion-ready');
+    });
+  }
+
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ── hero: type / hold / backspace through the verbs ──── */
@@ -9,7 +193,8 @@
   if (typedText) {
     if (reduced) {
       // no motion: state the whole list instead of animating through it
-      typedText.textContent = VERBS.slice(0, -1).join(', ') + ' and ' + VERBS.at(-1) + '.';
+      typedText.textContent = VERBS.map(v => v.replace('.', '')).slice(0, -1).join(', ') +
+        ' and ' + VERBS.at(-1);
     } else {
       const slot = typedText.closest('.typed');
       const TYPE = 85, ERASE = 40, HOLD = 1500, GAP = 400;
@@ -35,36 +220,18 @@
         i += erasing ? -1 : 1;
         setTimeout(tick, erasing ? ERASE : TYPE);
       };
-      setTimeout(tick, 600);
+      // start after the hero masks have landed
+      setTimeout(tick, 1100);
     }
   }
 
-  /* ── scroll reveal ────────────────────────────────────── */
-  const targets = document.querySelectorAll('[data-reveal]');
-  if (reduced || !('IntersectionObserver' in window)) {
-    targets.forEach(el => el.classList.add('is-in'));
-  } else {
-    const io = new IntersectionObserver((entries, obs) => {
-      entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        e.target.classList.add('is-in');
-        obs.unobserve(e.target);
-      });
-    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
-    targets.forEach(el => io.observe(el));
-  }
-
-  /* ── sticky topbar ────────────────────────────────────── */
+  /* ── active section drives the nav highlight ──────────────
+     One deterministic pass: whichever section covers the middle of
+     the viewport owns the highlight. (An IntersectionObserver misses
+     this when the user jumps between sections via a hash link.)   */
   const topbar = document.querySelector('.topbar');
-
-  /* ── active section drives the nav + the ambient wash ───── */
-  /* One deterministic pass: whichever section covers the middle
-     of the viewport owns the background and the nav highlight.
-     (An IntersectionObserver misses this when the user jumps
-     between sections via the nav or a hash link.)              */
   const navLinks = [...document.querySelectorAll('[data-nav]')];
-  const ambLayers = [...document.querySelectorAll('.ambience span')];
-  const sections = [...document.querySelectorAll('[data-amb-trigger]')];
+  const sections = [...document.querySelectorAll('[data-section]')];
 
   let current = null;
 
@@ -75,8 +242,7 @@
     const mid = scrollY + innerHeight / 2;
     let active = sections[0];
     for (const sec of sections) {
-      const top = sec.offsetTop;
-      if (mid >= top) active = sec;
+      if (mid >= sec.offsetTop) active = sec;
     }
     // the last section can never reach mid-viewport at max scroll
     if (scrollY + innerHeight >= document.documentElement.scrollHeight - 4) {
@@ -85,7 +251,6 @@
     if (active.id === current) return;
     current = active.id;
 
-    ambLayers.forEach(l => l.classList.toggle('is-on', l.dataset.amb === current));
     navLinks.forEach(a =>
       a.setAttribute('aria-current', String(a.getAttribute('href') === '#' + current))
     );
@@ -100,16 +265,41 @@
   addEventListener('resize', syncSection, { passive: true });
   syncSection();
 
-  /* ── mobile menu ──────────────────────────────────────── */
+  /* ── mobile menu: curtain drop on the shared timing ─────── */
   const burger = document.getElementById('burger');
   const menu = document.getElementById('mobilemenu');
+  const menuLinks = menu.querySelectorAll('a');
+
+  let curtain = null;
+  if (hasGSAP && !reduced) {
+    curtain = gsap.timeline({ paused: true })
+      .fromTo(menu, { yPercent: -100 }, { yPercent: 0, duration: MOTION.dur })
+      .fromTo(menuLinks,
+        { yPercent: 60, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: MOTION.dur, stagger: MOTION.stagger },
+        '-=0.2');
+  }
 
   const setMenu = open => {
     burger.setAttribute('aria-expanded', String(open));
     burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-    menu.hidden = !open;
     document.body.style.overflow = open ? 'hidden' : '';
-    if (open) menu.querySelector('a').focus();
+
+    if (!curtain) {           // reduced motion / no GSAP
+      menu.hidden = !open;
+      if (open) menuLinks[0].focus();
+      return;
+    }
+
+    if (open) {
+      menu.hidden = false;
+      curtain.timeScale(1).play();
+      menuLinks[0].focus();
+    } else {
+      // exits run faster than entries
+      curtain.timeScale(MOTION.dur / MOTION.fast).reverse();
+      curtain.eventCallback('onReverseComplete', () => { menu.hidden = true; });
+    }
   };
 
   burger.addEventListener('click', () =>
@@ -126,7 +316,7 @@
 
   marquees.querySelectorAll('.mq-row').forEach(row => {
     const track = row.querySelector('.mq-track');
-    track.style.setProperty('--dur', row.dataset.speed + 's');
+    track.style.setProperty('--mq-dur', row.dataset.speed + 's');
     // duplicate the set so translateX(-50%) loops seamlessly
     const clone = track.firstElementChild.cloneNode(true);
     clone.setAttribute('aria-hidden', 'true');
@@ -140,5 +330,6 @@
   });
 
   /* ── footer year ──────────────────────────────────────── */
-  document.getElementById('year').textContent = new Date().getFullYear();
+  const year = document.getElementById('year');
+  if (year) year.textContent = new Date().getFullYear();
 })();

@@ -14,10 +14,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="assets/css/styles.css">
+<script>document.documentElement.classList.add('motion-ready');</script>
 <noscript><style>
-  [data-reveal] { opacity: 1 !important; transform: none !important; }
-  .sec-title, .contact-type { clip-path: none !important; transform: none !important; }
-  .ambience [data-amb="hero"] { opacity: 1; }
+  /* no JS: .motion-ready is never set, so nothing is hidden; only the
+     JS-duplicated marquee needs a static fallback */
   .mq-track { animation: none; width: 100%; }
   .mq-set { flex-wrap: wrap; }
 </style></noscript>
@@ -27,14 +27,6 @@
 
 <div class="grain" aria-hidden="true"></div>
 
-<div class="ambience" aria-hidden="true">
-  <span data-amb="hero"></span>
-  <span data-amb="about"></span>
-  <span data-amb="journey"></span>
-  <span data-amb="projects"></span>
-  <span data-amb="skills"></span>
-  <span data-amb="contact"></span>
-</div>
 
 <!-- Nav -->
 <header class="topbar">
@@ -72,9 +64,9 @@
 <span id="top"></span>
 
 <!-- Hero -->
-<section class="hero" id="hero" data-amb-trigger>
+<section class="hero" id="hero" data-section>
 
-  <h1 class="hero-type">
+  <h1 class="hero-type" data-reveal>
     <span class="hero-greet">Hey, I&rsquo;m Sam.</span>
     <span class="hero-love" aria-hidden="true">I love to
       <span class="typed">
@@ -99,7 +91,7 @@
 </section>
 
 <!-- About -->
-<section class="sec" id="about" data-reveal data-amb-trigger data-ghost="About">
+<section class="sec" id="about" data-reveal data-section style="--z: 1" data-ghost="About">
   <div class="sec-head">
     <p class="idx">01 <span>/</span> About</p>
     <h2 class="sec-title">A little&nbsp;<br>about me&nbsp;.</h2>
@@ -120,7 +112,7 @@
 </section>
 
 <!-- Journey -->
-<section class="sec" id="journey" data-reveal data-amb-trigger data-ghost="Journey">
+<section class="sec" id="journey" data-reveal data-section style="--z: 2" data-ghost="Journey">
   <div class="sec-head">
     <p class="idx">02 <span>/</span> Journey</p>
     <h2 class="sec-title">Where I've<br>been building.</h2>
@@ -172,7 +164,7 @@
 </section>
 
 <!-- Projects --> 
-<section class="sec" id="projects" data-reveal data-amb-trigger data-ghost="Work">
+<section class="sec" id="projects" data-reveal data-section style="--z: 3" data-ghost="Work">
   <div class="sec-head">
     <p class="idx">03 <span>/</span> Projects</p>
     <h2 class="sec-title">What I've been<br>working on.</h2>
@@ -233,7 +225,7 @@
 </section>
 
 <!-- ── skills ───────────────────────────────────────────────── -->
-<section class="sec" id="skills" data-reveal data-amb-trigger data-ghost="Skills">
+<section class="sec" id="skills" data-reveal data-section style="--z: 4" data-ghost="Skills">
   <div class="sec-head sec-head-row">
     <div>
       <p class="idx">04 <span>/</span> Skills</p>
@@ -286,7 +278,7 @@
 </section>
 
 <!-- ── contact ──────────────────────────────────────────────── -->
-<section class="sec sec-contact" id="contact" data-reveal data-amb-trigger data-ghost="Hello">
+<section class="sec sec-contact" id="contact" data-reveal data-section style="--z: 5" data-ghost="Hello">
   <div class="sec-head">
     <p class="idx">05 <span>/</span> Contact</p>
   </div>
@@ -327,6 +319,9 @@
   </p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>
